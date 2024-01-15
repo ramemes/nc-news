@@ -15,14 +15,22 @@ app.get('/api/topics', getTopics)
 app.get('/api/articles/:article_id', getArticle)
 
 app.use((err, req, res, next) => {
-    if (err.status = 404) {
+    if (err.status === 404) {
         res.status(404).send({msg: err.msg})
     }
     next(err)
 })
 app.use((err, req, res, next) => {
-    if (err.status = 500) {
+    if (err.status === 500) {
         res.status(500).send({msg: err.msg})
+    }
+    next(err)
+})
+
+app.use((err, req, res, next) => {
+    if (err.code === '22P02') {
+        console.log(err.code)
+        res.status(400).send({msg : "invalid article id format"})
     }
     next(err)
 })

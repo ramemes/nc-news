@@ -43,7 +43,38 @@ describe("GET /api", () => {
 
 describe("GET /api/articles/:article_id", () => {
     test("responds with correct article object", () => {
+        return request(app).get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {{
+            expect(body.article).toEqual(
+                {
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    article_id: 1,
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: "2020-07-09T20:11:00.000Z",
+                    votes: 100,
+                    article_img_url:
+                      "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                  }
+            )
+        }})
+    })
+    test("responds with 404 if id doesnt exist", () => {
+        return request(app).get('/api/articles/333')
+        .expect(404)
+        .then(({body}) => {{
+            expect(body.msg).toBe("article with ID: 333 does not exist")
+        }})
+    })
 
-
+    test("responds with error code if invalid ID format given", () => {
+        return request(app).get('/api/articles/one')
+        .expect(400)
+        .then(({body}) => {{
+            console.log(body)
+            expect(body.msg).toBe("invalid article id format")
+        }})
     })
 })
