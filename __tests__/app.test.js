@@ -18,7 +18,7 @@ describe("general errors", () => {
 })
 
 describe("GET/api/topics", () => {
-    test("returns an array of topics with the correct values", () => {
+    test("returns an array of topics  with the correct values", () => {
         return request(app).get('/api/topics')
         .expect(200)
         .then(({ body }) => {
