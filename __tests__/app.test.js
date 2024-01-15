@@ -3,6 +3,7 @@ const app = require('../app')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
 const db = require('../db/connection')
+const endpointsFile = require('../endpoints.json')
 
 beforeAll(() => seed(testData));
 afterAll(() => {
@@ -28,5 +29,14 @@ describe("GET/api/topics", () => {
             expect(body.topics.length).toBe(3)
         })
     })
+})
 
+describe("GET /api", () => {
+    test("provide a description of all other endpoints available", () => {
+        return request(app).get('/api')
+        .expect(200)
+        .then(({body}) => {
+            expect(endpointsFile).toMatchObject(body.apiEndPoints)
+        } )
+    })
 })
