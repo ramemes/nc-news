@@ -10,7 +10,7 @@ afterAll(() => {
 });
 
 describe("general errors", () => {
-    test("returns 404 for invalid url", () => {
+    test("returns 404 for unknown url", () => {
         return request(app).get('/api/topcs')
         .expect(404)
     })
