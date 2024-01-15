@@ -9,9 +9,9 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
-  "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+  "GET /api/articles/:article_id": {
+    "description": "serves a single article chosen by article_id",
+    "queries": [],
     "exampleResponse": {
       "articles": [
         {
