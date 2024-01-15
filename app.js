@@ -3,7 +3,7 @@ const express = require('express');
 const { getEndPoints } = require('./controllers/api.controllers')
 const { getTopics } = require('./controllers/topics.controllers')
 const { getArticle } = require('./controllers/articles.controllers')
-
+const { getArticles } = require('./controllers/articles.controllers')
 
 const app = express();
 app.use(express.json())
@@ -13,6 +13,8 @@ app.get('/api', getEndPoints)
 app.get('/api/topics', getTopics)
 
 app.get('/api/articles/:article_id', getArticle)
+
+app.get('/api/articles', getArticles)
 
 app.use((err, req, res, next) => {
     if (err.status === 404) {

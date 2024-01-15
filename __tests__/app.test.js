@@ -4,6 +4,8 @@ const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
 const db = require('../db/connection')
 const endpointsFile = require('../endpoints.json')
+const toBeSorted = require("jest-sorted")
+
 
 beforeAll(() => seed(testData));
 afterAll(() => {
@@ -77,5 +79,26 @@ describe("GET /api/articles/:article_id", () => {
 
             expect(body.msg).toBe("invalid article id format")
         }})
+    })
+})
+
+describe("GET/api/articles", () => {
+    test("returns an array of topics  with the correct values", () => {
+        return request(app).get('/api/articles')
+        .expect(200)
+        .then(({ body }) => {
+            body.articles.forEach((article) => {
+                expect(typeof article.author).toBe("string")
+                expect(typeof article.title).toBe("string")
+                expect(typeof article.article_id).toBe("number")
+                expect(typeof article.topic).toBe("string")
+                expect(typeof article.created_at).toBe("string")
+                expect(typeof article.votes).toBe("number")
+                expect(typeof article.article_img_url).toBe("string")
+                expect(typeof Number(article.comment_count)).toBe("number")
+            })
+            expect(body.articles).toBeSortedBy('created_at', {descending: true})
+            expect(body.articles.length).toBe(13)
+        })
     })
 })

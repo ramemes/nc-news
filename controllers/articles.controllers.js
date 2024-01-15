@@ -1,5 +1,4 @@
-const { fetchArticle } = require('../models/articles.models')
-
+const { fetchArticle, fetchArticles } = require('../models/articles.models')
 
 
 exports.getArticle = async (req, res, next) => {
@@ -15,3 +14,13 @@ exports.getArticle = async (req, res, next) => {
 }
 
 
+exports.getArticles = async (req, res, next) => {
+    try {
+        const articles = await fetchArticles()
+        res.status(200).send({articles: articles})
+    }
+    catch(err) {
+        console.log(err)
+        next(err)
+    }
+}
