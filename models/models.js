@@ -1,5 +1,4 @@
 const db = require('../db/connection');
-const apiEndPoints = require('../endpoints.json');
 const fs = require('fs').promises;
 
 exports.fetchTopics = async () => {
