@@ -19,7 +19,6 @@ exports.getEndPoints = async (req, res, next) => {
         res.status(200).send({apiEndPoints: apiEndPoints})
     }
     catch(err) {
-        console.log(err)
         next(err)
     }
 }
