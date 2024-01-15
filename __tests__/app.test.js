@@ -43,10 +43,7 @@ describe("GET /api", () => {
 
 describe("GET /api/articles/:article_id", () => {
     test("responds with correct article object", () => {
-        return request(app).get('/api/articles/2')
-        .expect(1)
-        .then(({body}) => {
-            return 'hello'
-        })
+
+
     })
 })

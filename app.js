@@ -12,7 +12,7 @@ app.get('/api', getEndPoints)
 
 app.get('/api/topics', getTopics)
 
-app.get('/api/')
+app.get('/api/articles/:article_id', getArticle)
 
 app.use((err, req, res, next) => {
     if (err.status = 404) {
