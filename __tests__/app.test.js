@@ -9,6 +9,13 @@ afterAll(() => {
    return db.end();
 });
 
+describe("general errors", () => {
+    test("returns 404 for invalid url", () => {
+        return request(app).get('/api/topcs')
+        .expect(404)
+    })
+})
+
 describe("GET/api/topics", () => {
     test("returns an array of treasures with the correct values", () => {
         return request(app).get('/api/topics')
@@ -21,15 +28,5 @@ describe("GET/api/topics", () => {
             expect(body.topics.length).toBe(3)
         })
     })
-    // test("returns code 500 ", () => {
-    //     return request(app).get('/api/topics')
-    //     .expect(200)
-    //     .then(({ body }) => {
-    //         body.topics.forEach((topic) => {
-    //             expect(typeof topic.slug).toBe("string")
-    //             expect(typeof topic.description).toBe("string")
-    //         })
-    //         expect(body.topics.length).toBe(3)
-    //     })
-    // })
+
 })
