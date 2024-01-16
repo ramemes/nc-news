@@ -17,6 +17,10 @@ describe("general errors", () => {
         return request(app).get('/api/topcs')
         .expect(404)
     })
+    test("returns 404 for unknown url", () => {
+        return request(app).get('/api/artcls')
+        .expect(404)
+    })
 })
 
 describe("GET/api/topics", () => {
