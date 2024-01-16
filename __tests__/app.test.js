@@ -99,7 +99,7 @@ describe("GET/api/articles", () => {
                 expect(typeof article.created_at).toBe("string")
                 expect(typeof article.votes).toBe("number")
                 expect(typeof article.article_img_url).toBe("string")
-                expect(typeof Number(article.comment_count)).toBe("number")
+                expect(typeof article.comment_count).toBe("number")
             })
             expect(body.articles).toBeSortedBy('created_at', {descending: true})
             expect(body.articles.length).toBe(13)
@@ -112,6 +112,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         return request(app).get('/api/articles/1/comments')
         .expect(200)
         .then(({ body }) => {
+            expect(body.comments.length).toBe(11) 
             body.comments.forEach((comment) => {
                 expect(typeof comment.comment_id).toBe("number")
                 expect(typeof comment.votes).toBe("number")
@@ -120,7 +121,8 @@ describe("GET /api/articles/:article_id/comments", () => {
                 expect(typeof comment.body).toBe("string")
                 expect(typeof comment.article_id).toBe("number")
             }) 
-            expect(body.comments.length).toBe(11)   
+            expect(body.articles).toBeSortedBy('created_at', {descending: true})
+              
         })
     })
     test("returns correct error if article_id doesnt exist", () => {
