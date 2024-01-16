@@ -22,7 +22,7 @@ describe("general errors", () => {
         .expect(404)
     })
 })
-
+ 
 describe("GET/api/topics", () => {
     test("returns an array of topics  with the correct values", () => {
         return request(app).get('/api/topics')
@@ -41,7 +41,7 @@ describe("GET /api", () => {
     test("provide a description of all other endpoints available", () => {
         return request(app).get('/api')
         .expect(200)
-        .then(({body}) => {
+        .then(({ body }) => {
             expect(endpointsFile).toMatchObject(body.apiEndPoints)
         } )
     })
@@ -51,7 +51,7 @@ describe("GET /api/articles/:article_id", () => {
     test("responds with correct article object", () => {
         return request(app).get('/api/articles/1')
         .expect(200)
-        .then(({body}) => {{
+        .then(({ body }) => {{
             expect(body).toEqual(
                 {
                     article: {
@@ -71,7 +71,7 @@ describe("GET /api/articles/:article_id", () => {
     test("responds with 404 if id doesnt exist", () => {
         return request(app).get('/api/articles/333')
         .expect(404)
-        .then(({body}) => {{
+        .then(({ body }) => {{
             expect(body.msg).toBe("article with ID: 333 does not exist")
         }})
     })
@@ -79,7 +79,7 @@ describe("GET /api/articles/:article_id", () => {
     test("responds with error code if invalid ID format given", () => {
         return request(app).get('/api/articles/one')
         .expect(400)
-        .then(({body}) => {{
+        .then(({ body }) => {{
 
             expect(body.msg).toBe("invalid article id format")
         }})
@@ -105,4 +105,38 @@ describe("GET/api/articles", () => {
             expect(body.articles.length).toBe(13)
         })
     })
+})
+
+describe("GET /api/articles/:article_id/comments", () => {
+    test("returns an array of comments for the given article_id", () => {
+        return request(app).get('/api/articles/1/comments')
+        .expect(200)
+        .then(({ body }) => {
+            body.comments.forEach((comment) => {
+                expect(typeof comment.comment_id).toBe("number")
+                expect(typeof comment.votes).toBe("number")
+                expect(typeof comment.created_at).toBe("string")
+                expect(typeof comment.author).toBe("string")
+                expect(typeof comment.body).toBe("string")
+                expect(typeof comment.article_id).toBe("number")
+            }) 
+            expect(body.comments.length).toBe(11)   
+        })
+    })
+    test("returns correct error if article_id doesnt exist", () => {
+        return request(app).get('/api/articles/1223/comments')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe(`article with ID: 1223 does not exist`)   
+        })
+    })
+
+    test("returns correct error if incorrect format given", () => {
+        return request(app).get('/api/articles/dasads/comments')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("invalid article id format")   
+        })
+    })
+
 })
