@@ -121,7 +121,7 @@ describe("GET /api/articles/:article_id/comments", () => {
                 expect(typeof comment.body).toBe("string")
                 expect(typeof comment.article_id).toBe("number")
             }) 
-            expect(body.articles).toBeSortedBy('created_at', {descending: true})
+            expect(body.comments).toBeSortedBy('created_at', {descending: true})
               
         })
     })
