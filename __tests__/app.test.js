@@ -91,6 +91,7 @@ describe("GET/api/articles", () => {
         return request(app).get('/api/articles')
         .expect(200)
         .then(({ body }) => {
+            expect(body.articles.length).toBe(13)
             body.articles.forEach((article) => {
                 expect(typeof article.author).toBe("string")
                 expect(typeof article.title).toBe("string")
@@ -102,7 +103,6 @@ describe("GET/api/articles", () => {
                 expect(typeof article.comment_count).toBe("number")
             })
             expect(body.articles).toBeSortedBy('created_at', {descending: true})
-            expect(body.articles.length).toBe(13)
         })
     })
 })
