@@ -27,6 +27,17 @@ exports.fetchArticles = async () => {
     GROUP BY articles.article_id
     ORDER BY created_at DESC 
     `)
-    console.log(queryResponse.rows)
+    return queryResponse.rows
+}
+
+exports.fetchArticleComments = async (article_id) => {
+    const queryResponse = await db.query(`
+    SELECT * FROM comments
+    WHERE article_id = $1
+    ORDER BY created_at DESC
+    `, [article_id])
+    if (queryResponse.rows.length === 0) {
+        return Promise.reject({status:404, msg: `article with ID: ${article_id} does not exist`})
+    } 
     return queryResponse.rows
 }
