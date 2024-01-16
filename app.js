@@ -2,7 +2,7 @@ const express = require('express');
 
 const { getEndPoints } = require('./controllers/api.controllers')
 const { getTopics } = require('./controllers/topics.controllers')
-const { getArticle, getArticles, getArticleComments } = require('./controllers/articles.controllers')
+const { getArticle, getArticles, getArticleComments, postArticleComment } = require('./controllers/articles.controllers')
 
 const app = express();
 app.use(express.json())
@@ -16,6 +16,11 @@ app.get('/api/articles/:article_id', getArticle)
 app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id/comments', getArticleComments)
+
+app.post('/api/articles/:article_id/comments', postArticleComment)
+
+
+
 
 app.use((err, req, res, next) => {
     if (err.status === 404) {
