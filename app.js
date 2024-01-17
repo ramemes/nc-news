@@ -49,4 +49,13 @@ app.use((err, req, res, next) => {
     next(err)
 })
 
+app.use((err, req, res, next) => {
+    const { username, body } = req.body
+    const both = !username && !body ? ' and ' : ''
+    if (err.code === '23502') {
+        res.status(400).send({msg : `request body is missing ${!username ? 'username' : '' }${both}${!body ? 'body' : '' }`})
+    }
+    next(err)
+})
+
 module.exports = app

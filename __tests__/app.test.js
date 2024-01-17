@@ -208,5 +208,52 @@ describe("POST /api/articles/:article_id/comments", () => {
         })
     })
 
+    test("returns 400 error if missing fields in request body", () => {
+        return request(app).post('/api/articles/1/comments')
+        .send({
+            username: "lurker"
+        })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("request body is missing body")   
+        })
+    })
+    test("returns 400 error if missing fields in request body", () => {
+        return request(app).post('/api/articles/1/comments')
+        .send({
+            body: "lurker"
+        })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("request body is missing username")   
+        })
+    })
+    test("returns 400 error if missing fields in request body", () => {
+        return request(app).post('/api/articles/1/comments')
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("request body is missing username and body")   
+        })
+    })
+
+    test("ignores extra properties in request body", () => {
+        return request(app).post('/api/articles/1/comments')
+        .send({
+            username: "lurker",
+            body: "this is a comment",
+            unnecessary: 'property'
+        })
+        .expect(201)
+        .then(({ body }) => {
+            expect(body.comment).toMatchObject({ 
+                comment_id: 24,
+                body: 'this is a comment',
+                article_id: 1,
+                author: 'lurker',
+                votes: 0,
+            })   
+        })
+    })
 })
 
