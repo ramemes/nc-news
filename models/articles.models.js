@@ -1,14 +1,16 @@
 const db = require('../db/connection');
+const { checkExists } = require('../utils')
 
 exports.fetchArticle = async (article_id) => {
+    
+    await checkExists('articles','article_id',article_id)
     
     const queryResponse = await db.query(`
     SELECT *
     FROM articles
     WHERE article_id = $1`,[article_id])
-    if (queryResponse.rows.length === 0) {
-        return Promise.reject({status:404, msg: `article with ID: ${article_id} does not exist`})
-    } else return queryResponse.rows[0]
+    
+    return queryResponse.rows[0]
 }
 
 exports.fetchArticles = async () => {
@@ -31,13 +33,31 @@ exports.fetchArticles = async () => {
 }
 
 exports.fetchArticleComments = async (article_id) => {
+
+    await checkExists('articles','article_id',article_id)
+
     const queryResponse = await db.query(`
     SELECT * FROM comments
     WHERE article_id = $1
     ORDER BY created_at DESC
     `, [article_id])
-    if (queryResponse.rows.length === 0) {
-        return Promise.reject({status:404, msg: `article with ID: ${article_id} does not exist`})
-    } 
+
     return queryResponse.rows
+}
+
+
+exports.insertArticleComment = async (article_id, username, body) => {
+   
+
+    await checkExists('articles','article_id',article_id)
+
+    const queryResponse = await db.query(`
+    INSERT INTO comments
+        (article_id, author, body)
+    VALUES
+        ($1, $2, $3)
+    RETURNING *
+    `, [article_id, username, body])
+
+    return queryResponse.rows[0]
 }

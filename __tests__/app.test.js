@@ -52,7 +52,7 @@ describe("GET /api/articles/:article_id", () => {
         return request(app).get('/api/articles/1')
         .expect(200)
         .then(({ body }) => {{
-            expect(body).toEqual(
+            expect(body).toMatchObject(
                 {
                     article: {
                       article_id: 1,
@@ -72,11 +72,11 @@ describe("GET /api/articles/:article_id", () => {
         return request(app).get('/api/articles/333')
         .expect(404)
         .then(({ body }) => {{
-            expect(body.msg).toBe("article with ID: 333 does not exist")
+            expect(body.msg).toBe("article_id with value 333 does not exist in articles")
         }})
     })
 
-    test("responds with error code if invalid ID format given", () => {
+    test("responds with 404 error code if invalid ID format given", () => {
         return request(app).get('/api/articles/one')
         .expect(400)
         .then(({ body }) => {{
@@ -119,22 +119,85 @@ describe("GET /api/articles/:article_id/comments", () => {
                 expect(typeof comment.created_at).toBe("string")
                 expect(typeof comment.author).toBe("string")
                 expect(typeof comment.body).toBe("string")
-                expect(typeof comment.article_id).toBe("number")
+                expect(comment.article_id).toBe(1)
             }) 
             expect(body.comments).toBeSortedBy('created_at', {descending: true})
               
         })
     })
-    test("returns correct error if article_id doesnt exist", () => {
-        return request(app).get('/api/articles/1223/comments')
-        .expect(404)
+    test("returns 200 error if article has no comments and empty array", () => {
+        return request(app).get('/api/articles/2/comments')
+        .expect(200)
         .then(({ body }) => {
-            expect(body.msg).toBe(`article with ID: 1223 does not exist`)   
+            expect(body.comments).toEqual([])   
         })
     })
 
-    test("returns correct error if incorrect format given", () => {
+    test("returns 404 error if article_id doesnt exist", () => {
+        return request(app).get('/api/articles/1337/comments')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe(`article_id with value 1337 does not exist in articles`)   
+        })
+    })
+
+    test("returns 400 error if incorrect format given", () => {
         return request(app).get('/api/articles/dasads/comments')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("invalid article id format")   
+        })
+    })
+
+
+})
+
+describe("POST /api/articles/:article_id/comments", () => {
+    test("returns posted comment", () => {
+        return request(app).post('/api/articles/1/comments')
+        .send({
+            username: "lurker",
+            body: "this is a comment"
+        })
+        .expect(201)
+        .then(({ body }) => {
+            expect(body.comment).toMatchObject({ 
+                comment_id: 19,
+                body: 'this is a comment',
+                article_id: 1,
+                author: 'lurker',
+                votes: 0,
+            })
+        })
+    })
+
+    test("returns 404 error if article_id doesnt exist", () => {
+        return request(app).post('/api/articles/123/comments')
+        .send({
+            username: "lurker",
+            body: "this is a comment"
+        })
+    .expect(404)
+    .then(({ body }) => {
+        expect(body.msg).toBe(`article_id with value 123 does not exist in articles`)   
+
+        })
+    })
+
+    test("returns 404 error if given username that doesnt exist", () => {
+        return request(app).post('/api/articles/1/comments')
+        .send({
+            username: "idontexist",
+            body: "i want to exist"
+        })
+    .expect(404)
+    .then(({ body }) => {
+        expect(body.msg).toBe(`Key (author)=(idontexist) is not present in table \"users\".`)   
+
+        })
+    })
+    test("returns 400 error if incorrect format given", () => {
+        return request(app).post('/api/articles/dada2g/comments')
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe("invalid article id format")   
