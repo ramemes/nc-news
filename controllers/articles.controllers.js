@@ -40,11 +40,11 @@ exports.postArticleComment = async (req, res, next) => {
     try {
         const { article_id } = req.params
         const { username, body } = req.body
+
         const comment = await insertArticleComment(article_id, username, body)
         res.status(201).send({comment: comment})
     }
     catch(err) {
-        
         next(err)
     }
 }
