@@ -28,6 +28,7 @@ exports.getArticleComments = async (req, res, next) => {
     try {
         const { article_id } = req.params
         const comments = await fetchArticleComments(article_id)
+
         res.status(200).send({comments : comments})
     }
     catch(err) {
@@ -43,6 +44,7 @@ exports.postArticleComment = async (req, res, next) => {
         res.status(201).send({comment: comment})
     }
     catch(err) {
+        
         next(err)
     }
 }

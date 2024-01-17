@@ -72,7 +72,7 @@ describe("GET /api/articles/:article_id", () => {
         return request(app).get('/api/articles/333')
         .expect(404)
         .then(({ body }) => {{
-            expect(body.msg).toBe("article with ID: 333 does not exist")
+            expect(body.msg).toBe("article_id with value 333 does not exist in articles")
         }})
     })
 
@@ -125,11 +125,19 @@ describe("GET /api/articles/:article_id/comments", () => {
               
         })
     })
+    test("returns 200 error if article has no comments and empty array", () => {
+        return request(app).get('/api/articles/2/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.comments).toEqual([])   
+        })
+    })
+
     test("returns 404 error if article_id doesnt exist", () => {
-        return request(app).get('/api/articles/1223/comments')
+        return request(app).get('/api/articles/1337/comments')
         .expect(404)
         .then(({ body }) => {
-            expect(body.msg).toBe(`article with ID: 1223 does not exist`)   
+            expect(body.msg).toBe(`article_id with value 1337 does not exist in articles`)   
         })
     })
 
@@ -140,6 +148,7 @@ describe("GET /api/articles/:article_id/comments", () => {
             expect(body.msg).toBe("invalid article id format")   
         })
     })
+
 
 })
 
@@ -161,18 +170,38 @@ describe("POST /api/articles/:article_id/comments", () => {
             })
         })
     })
-})
-    //     test("returns 404 error if article_id doesnt exist", () => {
-    //         return request(app).post('/api/articles/123/comments')
-    //         .send({
-    //             username: "lurker",
-    //             body: "this is a comment"
-    //         })
-    //     .expect(201)
-    //     .then(({ body }) => {
-    //         expect(body.msg).toBe(`article with ID: 123 does not exist`)   
 
-    //         })
-    //     })
-    // 
-    
+    test("returns 404 error if article_id doesnt exist", () => {
+        return request(app).post('/api/articles/123/comments')
+        .send({
+            username: "lurker",
+            body: "this is a comment"
+        })
+    .expect(404)
+    .then(({ body }) => {
+        expect(body.msg).toBe(`article_id with value 123 does not exist in articles`)   
+
+        })
+    })
+
+    test("returns 404 error if given username that doesnt exist", () => {
+        return request(app).post('/api/articles/1/comments')
+        .send({
+            username: "idontexist",
+            body: "i want to exist"
+        })
+    .expect(404)
+    .then(({ body }) => {
+        expect(body.msg).toBe(`Key (author)=(idontexist) is not present in table \"users\".`)   
+
+        })
+    })
+    test("returns 400 error if incorrect format given", () => {
+        return request(app).post('/api/articles/dada2g/comments')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("invalid article id format")   
+        })
+    })
+
+})
