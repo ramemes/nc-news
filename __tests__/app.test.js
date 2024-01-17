@@ -198,6 +198,10 @@ describe("POST /api/articles/:article_id/comments", () => {
     })
     test("returns 400 error if incorrect format given", () => {
         return request(app).post('/api/articles/dada2g/comments')
+        .send({
+            username: "lurker",
+            body: "this is a comment"
+        })
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe("invalid article id format")   
@@ -205,3 +209,4 @@ describe("POST /api/articles/:article_id/comments", () => {
     })
 
 })
+
