@@ -2,7 +2,7 @@ const express = require('express');
 
 const { getEndPoints } = require('./controllers/api.controllers')
 const { getTopics } = require('./controllers/topics.controllers')
-const { getArticle, getArticles, getArticleComments, postArticleComment } = require('./controllers/articles.controllers')
+const { getArticle, getArticles, getArticleComments, postArticleComment, patchArticle } = require('./controllers/articles.controllers')
 
 const app = express();
 app.use(express.json())
@@ -19,7 +19,7 @@ app.get('/api/articles/:article_id/comments', getArticleComments)
 
 app.post('/api/articles/:article_id/comments', postArticleComment)
 
-
+app.patch('/api/articles/:article_id', patchArticle)
 
 
 app.use((err, req, res, next) => {
@@ -37,7 +37,7 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
     if (err.code === '22P02') {
-        res.status(400).send({msg : "invalid article id format"})
+        res.status(400).send({msg : "invalid format"})
     }
     next(err)
 })
@@ -50,10 +50,8 @@ app.use((err, req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    const { username, body } = req.body
-    const both = !username && !body ? ' and ' : ''
     if (err.code === '23502') {
-        res.status(400).send({msg : `request body is missing ${!username ? 'username' : '' }${both}${!body ? 'body' : '' }`})
+        res.status(400).send({msg : `request body is missing parameters`})
     }
     next(err)
 })

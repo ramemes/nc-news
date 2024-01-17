@@ -48,7 +48,6 @@ exports.fetchArticleComments = async (article_id) => {
 
 exports.insertArticleComment = async (article_id, username, body) => {
    
-
     await checkExists('articles','article_id',article_id)
 
     const queryResponse = await db.query(`
@@ -58,6 +57,20 @@ exports.insertArticleComment = async (article_id, username, body) => {
         ($1, $2, $3)
     RETURNING *
     `, [article_id, username, body])
+
+    return queryResponse.rows[0]
+}
+
+exports.updateArticle = async (article_id, inc_votes) => {
+    
+    await checkExists('articles','article_id',article_id)
+
+    const queryResponse = await db.query(`
+        UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *
+    `,[inc_votes, article_id])
 
     return queryResponse.rows[0]
 }

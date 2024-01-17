@@ -81,7 +81,7 @@ describe("GET /api/articles/:article_id", () => {
         .expect(400)
         .then(({ body }) => {{
 
-            expect(body.msg).toBe("invalid article id format")
+            expect(body.msg).toBe("invalid format")
         }})
     })
 })
@@ -145,7 +145,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         return request(app).get('/api/articles/dasads/comments')
         .expect(400)
         .then(({ body }) => {
-            expect(body.msg).toBe("invalid article id format")   
+            expect(body.msg).toBe("invalid format")   
         })
     })
 
@@ -204,28 +204,28 @@ describe("POST /api/articles/:article_id/comments", () => {
         })
         .expect(400)
         .then(({ body }) => {
-            expect(body.msg).toBe("invalid article id format")   
+            expect(body.msg).toBe("invalid format")   
         })
     })
 
-    test("returns 400 error if missing fields in request body", () => {
+    test("returns 400 error if missing body in request body", () => {
         return request(app).post('/api/articles/1/comments')
         .send({
             username: "lurker"
         })
         .expect(400)
         .then(({ body }) => {
-            expect(body.msg).toBe("request body is missing body")   
+            expect(body.msg).toBe("request body is missing parameters")   
         })
     })
-    test("returns 400 error if missing fields in request body", () => {
+    test("returns 400 error if missing username in request body", () => {
         return request(app).post('/api/articles/1/comments')
         .send({
             body: "lurker"
         })
         .expect(400)
         .then(({ body }) => {
-            expect(body.msg).toBe("request body is missing username")   
+            expect(body.msg).toBe("request body is missing parameters")   
         })
     })
     test("returns 400 error if missing fields in request body", () => {
@@ -233,7 +233,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         .send({})
         .expect(400)
         .then(({ body }) => {
-            expect(body.msg).toBe("request body is missing username and body")   
+            expect(body.msg).toBe("request body is missing parameters")   
         })
     })
 
@@ -256,4 +256,95 @@ describe("POST /api/articles/:article_id/comments", () => {
         })
     })
 })
+
+describe("PATCH /api/articles/:article_id", () => {
+    test("returns updated article", () => {
+        return request(app).patch('/api/articles/1')
+        .send({
+            inc_votes: 22
+        })
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.article).toMatchObject(
+                {
+                    title: "Living in the shadow of a great man",
+                    article_id: 1,
+                    votes: 122
+                }
+            )
+        })
+    })   
+    test("returns updated article for negative votes (decrement)", () => {
+        return request(app).patch('/api/articles/2')
+        .send({
+            inc_votes: -15
+        })
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.article).toMatchObject(
+                {
+                    title: "Sony Vaio; or, The Laptop",
+                    article_id: 2,
+                    votes: -15
+                }
+            )
+        })
+    })   
+    test("returns 404 error if article_id doesn't exist", () => {
+        return request(app).patch('/api/articles/234')
+        .send({
+            inc_votes: 55
+        })
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("article_id with value 234 does not exist in articles")
+        })
+
+    })  
+    test("returns 400 error if format is incorrect", () => {
+        return request(app).patch('/api/articles/29rk3')
+        .send({
+            inc_votes: 22
+        })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("invalid format")
+        })
+    })
+    test("returns 400 error if missing inc_votes in request body", () => {
+        return request(app).patch('/api/articles/2')
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("request body is missing parameters")   
+        })
+    })
+    test("returns 400 error if inc_votes given wrong data type", () => {
+        return request(app).patch('/api/articles/2')
+        .send({
+            inc_votes: 'hi'
+        })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("invalid format")   
+        })
+    })
+    test("returns updated article ignoring extra request body parameters", () => {
+        return request(app).patch('/api/articles/3')
+        .send({
+            inc_votes: -15,
+            dec_votes: 232
+        })
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.article).toMatchObject(
+                {
+                    title: "Eight pug gifs that remind me of mitch",
+                    article_id: 3,
+                    votes: -15
+                }
+            )
+        })
+    }) 
+})  
 
