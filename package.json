@@ -35,7 +35,10 @@
   },
   "dependencies": {
     "dotenv": "^16.0.0",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "pg-format": "^1.0.4"
   },
   "jest": {
     "setupFilesAfterEnv": [
