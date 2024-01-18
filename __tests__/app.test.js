@@ -30,8 +30,12 @@ describe("GET/api/topics", () => {
         .expect(200)
         .then(({ body }) => {
             body.topics.forEach((topic) => {
-                expect(typeof topic.slug).toBe("string")
-                expect(typeof topic.description).toBe("string")
+                expect(topic).toMatchObject(
+                    {
+                        slug: expect.any(String),
+                        description: expect.any(String)
+                    }
+                )
             })
             expect(body.topics.length).toBe(3)
         })
@@ -398,13 +402,17 @@ describe("GET /api/users", () => {
         return request(app).get('/api/users')
         .expect(200)
         .then(({body}) => {
-            console.log(body)
             expect(body.users.length).toBe(4)
             body.users.forEach((user) => {
-                expect(typeof user.username).toBe("string")
-                expect(typeof user.name).toBe("string")
-                expect(typeof user.avatar_url).toBe("string")
+                expect(user).toMatchObject(
+                    {
+                        username: expect.any(String),
+                        name: expect.any(String),
+                        avatar_url: expect.any(String)
+                    }
+                )
             })
         })
     })
 })
+
