@@ -53,6 +53,7 @@ exports.patchArticle = async (req, res, next) => {
     try {
         const { article_id } = req.params
         const { inc_votes } = req.body
+        
         const article = await updateArticle(article_id, inc_votes)
         res.status(200).send({article:article})
     }
