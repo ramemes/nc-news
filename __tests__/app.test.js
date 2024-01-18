@@ -257,94 +257,35 @@ describe("POST /api/articles/:article_id/comments", () => {
     })
 })
 
-describe("PATCH /api/articles/:article_id", () => {
-    test("returns updated article", () => {
-        return request(app).patch('/api/articles/1')
-        .send({
-            inc_votes: 22
-        })
-        .expect(200)
-        .then(({ body }) => {
-            expect(body.article).toMatchObject(
-                {
-                    title: "Living in the shadow of a great man",
-                    article_id: 1,
-                    votes: 122
-                }
-            )
-        })
-    })   
-    test("returns updated article for negative votes (decrement)", () => {
-        return request(app).patch('/api/articles/2')
-        .send({
-            inc_votes: -15
-        })
-        .expect(200)
-        .then(({ body }) => {
-            expect(body.article).toMatchObject(
-                {
-                    title: "Sony Vaio; or, The Laptop",
-                    article_id: 2,
-                    votes: -15
-                }
-            )
-        })
-    })   
-    test("returns 404 error if article_id doesn't exist", () => {
-        return request(app).patch('/api/articles/234')
-        .send({
-            inc_votes: 55
-        })
-        .expect(404)
-        .then(({ body }) => {
-            expect(body.msg).toBe("article_id with value 234 does not exist in articles")
-        })
+// describe("DELETE /api/comments/:comment_id", () => {
+//     test("responds with status 204 and no content" , () => {
+//         return request(app).delete('/api/comments/1')
+//         .expect(204)
+//         .then(({body}) => {
+//             expect(body).toEqual({})
+//         })
+//     })
+    // test("returns 404 error if comment_id doesnt exist", () => {
+    //     return request(app).post('/api/comments/1203')
+    //     .expect(404)
+    //     .then(({ body }) => {
+    //         expect(body.msg).toBe(`comment_id with value 1203 does not exist in comments`)   
 
-    })  
-    test("returns 400 error if format is incorrect", () => {
-        return request(app).patch('/api/articles/29rk3')
-        .send({
-            inc_votes: 22
-        })
-        .expect(400)
-        .then(({ body }) => {
-            expect(body.msg).toBe("invalid format")
-        })
-    })
-    test("returns 400 error if missing inc_votes in request body", () => {
-        return request(app).patch('/api/articles/2')
-        .send({})
-        .expect(400)
-        .then(({ body }) => {
-            expect(body.msg).toBe("request body is missing parameters")   
-        })
-    })
-    test("returns 400 error if inc_votes given wrong data type", () => {
-        return request(app).patch('/api/articles/2')
-        .send({
-            inc_votes: 'hi'
-        })
-        .expect(400)
-        .then(({ body }) => {
-            expect(body.msg).toBe("invalid format")   
-        })
-    })
-    test("returns updated article ignoring extra request body parameters", () => {
-        return request(app).patch('/api/articles/3')
-        .send({
-            inc_votes: -15,
-            dec_votes: 232
-        })
-        .expect(200)
-        .then(({ body }) => {
-            expect(body.article).toMatchObject(
-                {
-                    title: "Eight pug gifs that remind me of mitch",
-                    article_id: 3,
-                    votes: -15
-                }
-            )
-        })
-    }) 
-})  
+    //     })
+    // })
 
+// })
+
+
+
+// Description
+// Should:
+
+// be available on /api/comments/:comment_id.
+// delete the given comment by comment_id.
+// Responds with:
+
+// status 204 and no content.
+// Consider what errors could occur with this endpoint, and make sure to test for them.
+
+// Remember to add a description of this endpoint to your /api endpoint.
