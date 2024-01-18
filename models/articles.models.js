@@ -14,10 +14,7 @@ exports.fetchArticle = async (article_id) => {
 }
 
 exports.fetchArticles = async (topic) => {
-    // if (!['mitch','cats',undefined].includes(topic)) {
-    //     return 
-    // }
-    
+
     const queryValues = []
     let queryStr =  `
     SELECT 
