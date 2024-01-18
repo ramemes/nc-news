@@ -265,14 +265,14 @@ describe("POST /api/articles/:article_id/comments", () => {
 //             expect(body).toEqual({})
 //         })
 //     })
-    // test("returns 404 error if comment_id doesnt exist", () => {
-    //     return request(app).post('/api/comments/1203')
-    //     .expect(404)
-    //     .then(({ body }) => {
-    //         expect(body.msg).toBe(`comment_id with value 1203 does not exist in comments`)   
+//     test("returns 404 error if comment_id doesnt exist", () => {
+//         return request(app).post('/api/comments/1203')
+//         .expect(404)
+//         .then(({ body }) => {
+//             expect(body.msg).toBe(`comment_id with value 1203 does not exist in comments`)   
 
-    //     })
-    // })
+//         })
+//     })
 
 // })
 
