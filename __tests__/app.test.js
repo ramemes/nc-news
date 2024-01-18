@@ -4,7 +4,8 @@ const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
 const db = require('../db/connection')
 const endpointsFile = require('../endpoints.json')
-const toBeSorted = require("jest-sorted")
+const toBeSorted = require("jest-sorted");
+const { type } = require('os');
 
 
 beforeAll(() => seed(testData));
@@ -257,6 +258,114 @@ describe("POST /api/articles/:article_id/comments", () => {
     })
 })
 
+
+describe("PATCH /api/articles/:article_id", () => {
+    test("returns updated article", () => {
+        return request(app).patch('/api/articles/1')
+        .send({
+            inc_votes: 22
+        })
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.article).toMatchObject(
+                {
+                    title: "Living in the shadow of a great man",
+                    article_id: 1,
+                    votes: 122,
+                    body: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    article_img_url: expect.any(String)
+                }
+            )
+        })
+    })   
+    test("returns updated article for negative votes (decrement)", () => {
+        return request(app).patch('/api/articles/2')
+        .send({
+            inc_votes: -15
+        })
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.article).toMatchObject(
+                {
+                    title: "Sony Vaio; or, The Laptop",
+                    article_id: 2,
+                    votes: -15,
+                    body: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    article_img_url: expect.any(String)
+                }
+            )
+        })
+    })   
+    test("returns 404 error if article_id doesn't exist", () => {
+        return request(app).patch('/api/articles/234')
+        .send({
+            inc_votes: 55
+        })
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("article_id with value 234 does not exist in articles")
+        })
+
+    })  
+    test("returns 400 error if format is incorrect", () => {
+        return request(app).patch('/api/articles/29rk3')
+        .send({
+            inc_votes: 22
+        })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("invalid format")
+        })
+    })
+    test("returns 400 error if missing inc_votes in request body", () => {
+        return request(app).patch('/api/articles/2')
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("request body is missing parameters")   
+        })
+    })
+    test("returns 400 error if inc_votes given wrong data type", () => {
+        return request(app).patch('/api/articles/2')
+        .send({
+            inc_votes: 'hi'
+        })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("invalid format")   
+        })
+    })
+    test("returns updated article ignoring extra request body parameters", () => {
+        return request(app).patch('/api/articles/3')
+        .send({
+            inc_votes: -15,
+            dec_votes: 232
+        })
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.article).toMatchObject(
+                {
+                    title: "Eight pug gifs that remind me of mitch",
+                    article_id: 3,
+                    votes: -15,
+                    body: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    article_img_url: expect.any(String)
+                }
+            )
+        })
+    }) 
+})  
+
+
 describe("DELETE /api/comments/:comment_id", () => {
     test("responds with status 204 and no content" , () => {
         return request(app).delete('/api/comments/1')
@@ -284,4 +393,18 @@ describe("DELETE /api/comments/:comment_id", () => {
 
 })
 
-
+describe("GET /api/users", () => {
+    test("responds with an array of all users" , () => {
+        return request(app).get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            console.log(body)
+            expect(body.users.length).toBe(4)
+            body.users.forEach((user) => {
+                expect(typeof user.username).toBe("string")
+                expect(typeof user.name).toBe("string")
+                expect(typeof user.avatar_url).toBe("string")
+            })
+        })
+    })
+})
