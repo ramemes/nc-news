@@ -13,8 +13,10 @@ exports.fetchArticle = async (article_id) => {
     return queryResponse.rows[0]
 }
 
-exports.fetchArticles = async () => {
-    const queryResponse = await db.query(`
+exports.fetchArticles = async (topic) => {
+
+    const queryValues = []
+    let queryStr =  `
     SELECT 
         articles.author,
         articles.title,
@@ -26,9 +28,17 @@ exports.fetchArticles = async () => {
         COUNT(comments) ::INT AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY created_at DESC 
-    `)
+    `
+    if (topic) {
+        await checkExists('articles','topic',topic)
+        queryValues.push(topic)
+        queryStr += `WHERE articles.topic = $1`
+    }
+
+    queryStr += ` GROUP BY articles.article_id
+    ORDER BY created_at DESC `
+
+    const queryResponse = await db.query(queryStr, queryValues)
     return queryResponse.rows
 }
 
