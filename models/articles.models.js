@@ -6,9 +6,20 @@ exports.fetchArticle = async (article_id) => {
     await checkExists('articles','article_id',article_id)
     
     const queryResponse = await db.query(`
-    SELECT *
+    SELECT 
+        articles.author,
+        articles.title,
+        articles.article_id,
+        articles.body,
+        articles.topic,
+        articles.created_at,
+        articles.votes,
+        articles.article_img_url,
+        COUNT(comments) ::INT AS comment_count
     FROM articles
-    WHERE article_id = $1`,[article_id])
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id`,[article_id])
     
     return queryResponse.rows[0]
 }
@@ -30,7 +41,7 @@ exports.fetchArticles = async (topic) => {
     LEFT JOIN comments ON articles.article_id = comments.article_id
     `
     if (topic) {
-        await checkExists('articles','topic',topic)
+        await checkExists('topics','slug',topic)
         queryValues.push(topic)
         queryStr += `WHERE articles.topic = $1`
     }
