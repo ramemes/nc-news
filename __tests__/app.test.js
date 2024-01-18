@@ -257,3 +257,35 @@ describe("POST /api/articles/:article_id/comments", () => {
     })
 })
 
+describe("DELETE /api/comments/:comment_id", () => {
+    test("responds with status 204 and no content" , () => {
+        return request(app).delete('/api/comments/1')
+        .expect(204)
+        .then(({body}) => {
+            expect(body).toEqual({})
+        })
+    })
+    test("returns 404 error if comment_id doesnt exist", () => {
+        return request(app).post('/api/comments/1203')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe(`comment_id with value 1203 does not exist in comments`)   
+
+        })
+    })
+
+})
+
+
+
+// Description
+// Should:
+
+// be available on /api/comments/:comment_id.
+// delete the given comment by comment_id.
+// Responds with:
+
+// status 204 and no content.
+// Consider what errors could occur with this endpoint, and make sure to test for them.
+
+// Remember to add a description of this endpoint to your /api endpoint.
