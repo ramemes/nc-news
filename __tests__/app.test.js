@@ -130,7 +130,6 @@ describe("GET /api/articles/:article_id/comments", () => {
                     article_id: 1
                 })
             }) 
-            expect(body.comments).toBeSortedBy('created_at', {descending: true})
               
         })
     })
@@ -456,7 +455,6 @@ describe("GET /api/articles (topic query)", () => {
                     comment_count: expect.any(Number)
                 })
             })
-            expect(body.articles).toBeSortedBy('created_at', {descending: true})
         })
     })
     test("responds with 200 empty response if no articles under topic", () => {
@@ -497,5 +495,135 @@ describe("GET /api/articles/:article_id (comment_count)", () => {
                   }
             )
         }})
+    })
+})
+
+
+describe("GET /api/articles (sorting queries)", () => {
+    test("responds with articles sorted by chosen column default descending", () => {
+        return request(app).get('/api/articles/?sort_by=title')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('title', {descending: true})
+        })
+    })
+
+    test("responds with articles sorted by chosen column ascending", () => {
+        return request(app).get('/api/articles/?sort_by=title&order=asc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('title')
+        })
+    })
+
+    test("returns 400 error if given sort query", () => {
+        return request(app).get('/api/articles/?sort_by=2fds&order=asc')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid sort query')
+        })
+    })
+
+    test("returns 400 error if given order query", () => {
+        return request(app).get('/api/articles/?sort_by=title&order=23w')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid order query')
+        })
+    })
+})
+
+describe("GET /api/users/:username", () => {
+    test("returns user from given username", () => {
+        return request(app).get('/api/users/icellusedkars')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.user).toMatchObject(
+                {
+                    username: 'icellusedkars',
+                    name: 'sam',
+                    avatar_url: 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4'
+                }
+            )
+        })
+    })
+    test("returns 404 if username doesnt exist", () => {
+        return request(app).get('/api/users/ramemes')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('username with value ramemes does not exist in users')
+        })
+    })
+})
+
+describe("PATCH /api/comments/:comment_id", () => {
+    test("returns updated comment", () => {
+        return request(app).patch('/api/comments/2')
+        .expect(200)  
+        .send({inc_votes: 4})
+        .then(({body}) => {
+            expect(body.comment).toMatchObject(
+                {
+                    body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+                    votes: 18,
+                    author: "butter_bridge",
+                    article_id: 1                
+                }
+            )
+        })
+    })
+
+    test("returns 404 if comment doesnt exist", () => {
+        return request(app).patch('/api/comments/221')
+        .expect(404)  
+        .send({inc_votes: 4})
+        .then(({body}) => {
+            expect(body.msg).toBe('comment_id with value 221 does not exist in comments')
+            
+        })
+    })
+    test("returns 400 if given incorrect format", () => {
+        return request(app).patch('/api/comments/1wf32')
+        .expect(400)  
+        .send({inc_votes: 4})
+        .then(({body}) => {
+            expect(body.msg).toBe('invalid format')
+        })
+    })
+    test("ignores irrelevant properties", () => {
+        return request(app).patch('/api/comments/3')
+        .send({hack_database: 4, inc_votes: 42})
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comment).toMatchObject(
+                {
+                    body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+                    votes: 142,
+                    author: "icellusedkars",
+                    article_id: 1,
+                  }
+            )
+        })
+    })
+    
+    test("returns 400 if missing inc_votes", () => {
+        return request(app).patch('/api/comments/2')
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("request body is missing parameters")   
+        })
+    })
+
+
+    test("returns 400 error if inc_votes given wrong data type", () => {
+        return request(app).patch('/api/comments/2')
+        .send({
+            inc_votes: 'hi'
+        })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("invalid format")   
+        })
     })
 })

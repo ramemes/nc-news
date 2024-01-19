@@ -7,3 +7,13 @@ exports.fetchUsers = async () => {
     `)
     return queryResponse.rows
 }
+
+exports.fetchUserByUsername = async (username) => {
+
+    await checkExists('users','username',username)
+
+    const queryResponse = await db.query(`
+    SELECT * FROM users
+    WHERE username = $1`,[username])
+    return queryResponse.rows[0]
+}
