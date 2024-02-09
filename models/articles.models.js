@@ -44,23 +44,23 @@ exports.fetchArticles = async (topic, sort_by='created_at', order='desc') => {
         articles.article_img_url,
         COUNT(comments) ::INT AS comment_count
     FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
+    LEFT JOIN comments ON articles.article_id = comments.article_id 
     `
     if (topic) {
         await checkExists('topics','slug',topic)
         queryValues.push(topic)
-        queryStr += `WHERE articles.topic = $1`
+        queryStr += `WHERE articles.topic = $1 `
     }
     
-    queryStr += ` GROUP BY articles.article_id`
+    queryStr += ` GROUP BY articles.article_id `
 
     if(sort_by === "comment_count") {
-        queryStr += `ORDER BY COUNT(comments.comment_id) ${order} `
+        queryStr += `ORDER BY COUNT(comments.comment_id) ${order} `;
     } 
     else {
-        queryStr += `ORDER BY articles.${sort_by} ${order} `
+        queryStr += `ORDER BY articles.${sort_by} ${order} `;
     }
-    
+
 
     const queryResponse = await db.query(queryStr, queryValues)
     return queryResponse.rows
