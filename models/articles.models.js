@@ -25,7 +25,7 @@ exports.fetchArticle = async (article_id) => {
 }
 
 exports.fetchArticles = async (topic, sort_by='created_at', order='desc') => {
-    if (!['title', 'topic','votes','author','body','created_at','article_img_url'].includes(sort_by)) {
+    if (!['title', 'topic','votes','author','body','created_at','article_img_url, comment_count'].includes(sort_by)) {
         return Promise.reject({status: 400, msg: 'Invalid sort query'})
     }
     if (!['desc', 'asc'].includes(order)) {
