@@ -52,8 +52,15 @@ exports.fetchArticles = async (topic, sort_by='created_at', order='desc') => {
         queryStr += `WHERE articles.topic = $1`
     }
 
-    queryStr += ` GROUP BY articles.article_id
-    ORDER BY articles.${sort_by} ${order} `
+    if (sort_by === "comment_count") {
+        queryStr += ` GROUP BY articles.article_id
+        ORDER BY ${sort_by} ${order} ` 
+    } else {
+        queryStr += ` GROUP BY articles.article_id
+        ORDER BY articles.${sort_by} ${order} `
+    }
+
+
 
     const queryResponse = await db.query(queryStr, queryValues)
     return queryResponse.rows
