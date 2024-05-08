@@ -110,25 +110,14 @@ exports.updateArticle = async (article_id, inc_votes) => {
 }
 
 exports.insertArticle = async (title, topic, username, body, article_img_url) => {
-    let queryResponse;
-    if (article_img_url) {
-        queryResponse = await db.query(`
+    const queryResponse = await db.query(`
         INSERT INTO articles
             (title, topic, author, body, article_img_url)
         VALUES
             ($1, $2, $3, $4, $5)
         RETURNING *
     `,[title, topic, username, body, article_img_url])
-    }
-    else {
-        queryResponse = await db.query(`
-        INSERT INTO articles
-            (title, topic, author, body)
-        VALUES
-            ($1, $2, $3, $4)
-        RETURNING *
-    `,[title, topic, username, body])
-    }
+
     
     
 
