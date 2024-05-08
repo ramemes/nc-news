@@ -65,7 +65,6 @@ exports.patchArticle = async (req, res, next) => {
 
 exports.postArticle = async (req, res, next) => {
     try {
-
         const { title, topic, username, body, article_img_url } = req.body
 
         const article = await insertArticle(title, topic, username, body, article_img_url)
