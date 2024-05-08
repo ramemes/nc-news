@@ -66,9 +66,9 @@ exports.patchArticle = async (req, res, next) => {
 exports.postArticle = async (req, res, next) => {
     try {
 
-        const { title, topic, username, body } = req.body
+        const { title, topic, username, body, article_img_url } = req.body
 
-        const article = await insertArticle(title, topic, username, body)
+        const article = await insertArticle(title, topic, username, body, article_img_url)
         res.status(201).send({article: article})
     }
     catch(err) {
