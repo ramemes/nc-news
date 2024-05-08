@@ -5,10 +5,9 @@ const testData = require('../db/data/test-data/index')
 const db = require('../db/connection')
 const endpointsFile = require('../endpoints.json')
 const toBeSorted = require("jest-sorted");
-const { type } = require('os');
 
 
-beforeAll(() => seed(testData));
+beforeEach(() => seed(testData));
 afterAll(() => {
    return db.end();
 });

@@ -108,3 +108,16 @@ exports.updateArticle = async (article_id, inc_votes) => {
 
     return queryResponse.rows[0]
 }
+
+exports.insertArticle = async (title, topic, username, body) => {
+    
+    const queryResponse = await db.query(`
+        INSERT INTO articles
+            (title, topic, author, body)
+        VALUES
+            ($1, $2, $3, $4)
+        RETURNING *
+    `,[title, topic, username, body])
+
+    return queryResponse.rows[0]
+}
