@@ -626,3 +626,29 @@ describe("PATCH /api/comments/:comment_id", () => {
         })
     })
 })
+
+describe("POST /api/articles", () => {
+    test("returns updated comment", () => {
+        return request(app).post('/api/articles') 
+        .send(
+        {
+            username: "icellusedkars",
+            title: "Why You Should Use Typescript",
+            topic: "cats",
+            body:"body",
+            article_img_url: "https://i.ytimg.com/vi/OH3wSkKy4YE/maxresdefault.jpg"              
+        })
+        .expect(201) 
+        .then(({body}) => {
+            expect(body.article).toMatchObject(
+                {
+                    author: "icellusedkars",
+                    title: "Why You Should Use Typescript",
+                    topic: "cats",
+                    body:"body",
+                    article_img_url: "https://i.ytimg.com/vi/OH3wSkKy4YE/maxresdefault.jpg"              
+                }
+            )
+        })
+    })
+})

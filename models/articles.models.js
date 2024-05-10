@@ -109,7 +109,7 @@ exports.updateArticle = async (article_id, inc_votes) => {
     return queryResponse.rows[0]
 }
 
-exports.insertArticle = async (title, topic, username, body, article_img_url) => {
+exports.insertArticle = async (title, topic, username, body, article_img_url="") => {
     const queryResponse = await db.query(`
         INSERT INTO articles
             (title, topic, author, body, article_img_url)
@@ -118,8 +118,7 @@ exports.insertArticle = async (title, topic, username, body, article_img_url) =>
         RETURNING *
     `,[title, topic, username, body, article_img_url])
 
-    
-    
+
 
     return queryResponse.rows[0]
 }

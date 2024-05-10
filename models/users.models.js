@@ -9,7 +9,9 @@ exports.fetchUsers = async () => {
 }
 
 exports.fetchUserByUsername = async (username) => {
-
+    username = username.trim()
+    if (!username) throw new Error("Username must not be empty");
+    
     await checkExists('users','username',username)
 
     const queryResponse = await db.query(`
